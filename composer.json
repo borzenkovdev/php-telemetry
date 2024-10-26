@@ -1,0 +1,26 @@
+{
+  "name": "borzenkovdev/php-telemetry",
+  "type": "library",
+  "description": "This package offer a variety of features for meaningful logging.",
+  "keywords": ["log", "logger"],
+  "homepage": "https://github.com/borzenkovdev/php-telemetry",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Ivan Borzenkov",
+      "email": "iborzenkov1988@gmail.com"
+    }
+  ],
+  "scripts": {
+    "lint": "phpcs --standard=PSR12 path/to/your/project",
+    "test": "phpunit --configuration phpunit.xml"
+  },
+  "require": {
+    "psr/log": "^3.0",
+    "php": ">=7.2"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.0",
+    "squizlabs/php_codesniffer": "*"
+  }
+}
