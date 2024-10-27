@@ -1,0 +1,7 @@
+#!/bin/sh
+composer lint
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+  echo  "Push was not executed due to failed lints"
+  exit 1
+fi
