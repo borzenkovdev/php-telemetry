@@ -53,7 +53,7 @@ $telemetry->log(LogLevel::WARNING, "Slow response from DB", ["db" => "orders"]);
 $telemetry->endTransaction();
 ```
 
-For more examples, see the [examples](https://github.com/jbroadway/analog/tree/master/examples) folder.
+For more examples, see the [examples](https://github.com/borzenkovdev/php-telemetry/tree/main/examples) folder.
 
 ## Configuring Date Format and Time Zone
 
