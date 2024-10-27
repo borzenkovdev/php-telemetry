@@ -1,4 +1,4 @@
-name: Run PHPUnit Tests
+name: Run Tests and Linters
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  php-tests:
+  php-tests-and-linters:
     runs-on: ubuntu-latest
 
     strategy:
@@ -30,5 +30,11 @@ jobs:
       - name: Install dependencies
         run: composer install --no-progress --no-suggest
 
-      - name: Run tests
+      - name: Run PHP_CodeSniffer
+        run: ./vendor/bin/phpcs --standard=PSR12 src/
+
+      - name: Run PHPStan
+        run: ./vendor/bin/phpstan analyse src/ --level=7
+
+      - name: Run PHPUnit Tests
         run: ./vendor/bin/phpunit --configuration phpunit.xml
