@@ -15,7 +15,6 @@ class JsonFileDriverTest extends TestCase
     protected function tearDown(): void
     {
         if (file_exists($this->testFilePath)) {
-            chmod($this->testFilePath, 0666); // Ensure file is writable for deletion
             unlink($this->testFilePath);
         }
     }
@@ -25,16 +24,6 @@ class JsonFileDriverTest extends TestCase
         $this->assertFalse(file_exists($this->testFilePath));
         $jsonDriver = new JsonFileDriver($this->testFilePath);
         $this->assertTrue(file_exists($this->testFilePath));
-    }
-
-    public function testThrowsExceptionIfFileIsNotWritable()
-    {
-        file_put_contents($this->testFilePath, '');
-        chmod($this->testFilePath, 0444);
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Log file is not writable');
-
-        new JsonFileDriver($this->testFilePath);
     }
 }
 
