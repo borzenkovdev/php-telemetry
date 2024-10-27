@@ -65,4 +65,31 @@ $telemetry->setTimeZone('America/New_York');
 ```
 This configuration will format timestamps according to the specified format and time zone.
 
-##
+## Adding a Custom Driver
+To add a custom driver, implement the DriverInterface and define the write method to handle log storage.
+
+### Example
+```php
+<?php
+
+namespace Telemetry\Drivers;
+
+use Telemetry\DriverInterface;
+
+class CustomDriver implements DriverInterface
+{
+    public function write(string $message): void
+    {
+        // Custom logic to store or display log message
+    }
+}
+```
+### Usage
+```php
+<?php
+
+$customDriver = new CustomDriver();
+$telemetry = new Telemetry($customDriver);
+$telemetry->log(LogLevel::INFO, "Testing custom driver");
+
+```
