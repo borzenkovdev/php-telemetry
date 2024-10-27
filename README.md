@@ -35,7 +35,16 @@ use Psr\Log\LogLevel;
 
 $telemetry = new Telemetry(new CliDriver());
 
+// Set log level manually
 $telemetry->log(LogLevel::INFO, 'Service started', ['origin' => 'http', 'customerId' => '123']);
+
+// Quick methods for different log levels types
+$telemetry->info('Info level log', ['user' => '123']);
+$telemetry->debug('Debug level log', ['details' => 'Step 1 completed']);
+$telemetry->error('Error level log', ['errorCode' => '404']);
+$telemetry->critical('Error level log', ['errorCode' => '500']);
+$telemetry->alert('Alert level log', ['errorCode' => '500']);
+$telemetry->emergency('emergency level log', ['errorCode' => '500']);
 
 ```
 
