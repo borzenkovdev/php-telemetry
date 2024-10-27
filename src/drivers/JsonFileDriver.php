@@ -5,7 +5,7 @@ namespace Telemetry\Drivers;
 use Exception;
 use Telemetry\DriverInterface;
 
-class FileDriver implements DriverInterface
+class JsonFileDriver implements DriverInterface
 {
     private string $filePath;
 
@@ -30,8 +30,19 @@ class FileDriver implements DriverInterface
         $this->filePath = $filePath;
     }
 
+    /**
+     * @param string $message
+     * @return void
+     */
     public function write(string $message): void
     {
-        file_put_contents($this->filePath, $message . PHP_EOL, FILE_APPEND);
+        // Convert the message string to JSON format
+        $logData = [
+            'timestamp' => (new \DateTime())->format('Y-m-d H:i:s'),
+            'message' => $message
+        ];
+
+        // Append the JSON-encoded log message to the file, each log on a new line
+        file_put_contents($this->filePath, json_encode($logData) . PHP_EOL, FILE_APPEND);
     }
 }
