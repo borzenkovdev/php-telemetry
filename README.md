@@ -1,4 +1,4 @@
-# Telemetry - This package offer a variety of features for meaningful logging.
+# Telemetry - lightweight PHP Logging Library with Multi-Driver Support
 
 A flexible and configurable logging library for PHP, supporting transactions with unique IDs, customizable date formats, and time zones.
 This library simplifies tracking logs with transaction IDs and performance timings and  implements the
