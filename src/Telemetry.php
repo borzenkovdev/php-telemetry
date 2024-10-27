@@ -3,70 +3,86 @@
 namespace Telemetry;
 
 use DateTime;
-use DateTimeInterface;
 use Psr\Log\AbstractLogger;
-use Psr\Log\LogLevel;
+use Psr\Log\LogLevel as PsrLogLevel;
+use Ramsey\Uuid\Uuid;
+use Stringable;
 
 class Telemetry extends AbstractLogger
 {
     private DriverInterface $driver;
+    private ?string $transactionId = null;
+    private ?float $transactionStartTime = null;
 
-    /**
-     * @param DriverInterface $driver
-     */
     public function __construct(DriverInterface $driver)
     {
         $this->driver = $driver;
     }
 
     /**
+     * @param $level
+     * @param string|Stringable $message
+     * @param array $context
+     * @return void
+     */
+    public function log($level, string|Stringable $message, array $context = []): void
+    {
+        $formattedMessage = $this->formatMessage($level, $message, $context);
+        $this->driver->write($formattedMessage);
+    }
+
+    /**
      * @param string $level
      * @param string $message
-     * @param array $attributes
+     * @param array $context
      * @return string
      */
-    private function formatMessage(string $level, string $message, array $attributes = []): string
+    private function formatMessage(string $level, string $message, array $context = []): string
     {
-        $timestamp = (new DateTime())->format(DateTimeInterface::ATOM);
-        $attrString = '';
+        $timestamp = (new DateTime())->format('Y/m/d');
 
-        foreach ($attributes as $key => $value) {
-            $attrString .= " $key=$value";
+        // If transactions was set - add transactionId to log
+        if ($this->transactionId !== null) {
+            $timestamp .= "/[{$this->transactionId}]";
         }
-        return "[$timestamp] [$level] $message $attrString";
+
+        $contextString = '';
+
+        foreach ($context as $key => $value) {
+            $contextString .= " $key=$value";
+        }
+
+        return "[$timestamp] [$level] $message $contextString";
     }
 
     /**
-     * @param string $level
-     * @param string $message
-     * @param array $attributes
      * @return void
      */
-    public function log(string $level, string $message, array $attributes = []): void
+    public function beginTransaction(): void
     {
-        $formattedMessage = $this->formatMessage($level, $message, $attributes);
-        $this->driver->write($formattedMessage);
+        $this->transactionId = Uuid::uuid4()->toString();
+        $this->transactionStartTime = microtime(true);
+
+        $this->log(PsrLogLevel::INFO, 'Transaction started');
     }
 
     /**
-     * @param string $id
-     * @param array $attributes
      * @return void
      */
-    public function startTransaction(string $id, array $attributes = []): void
+    public function endTransaction(): void
     {
-        $formattedMessage = $this->formatMessage('INFO', 'Transaction started', array_merge($attributes, ["TransactionID" => $id]));
-        $this->driver->write($formattedMessage);
-    }
+        if ($this->transactionId === null || $this->transactionStartTime === null) {
+            $this->log(PsrLogLevel::WARNING, 'No active transaction to end');
+        }
 
-    /**
-     * @param string $id
-     * @return void
-     */
-    public function endTransaction(string $id): void
-    {
-        $formattedMessage = $this->formatMessage('INFO', 'Transaction ended', ["TransactionID" => $id]);
-        $this->driver->write($formattedMessage);
+        $duration = round(microtime(true) - $this->transactionStartTime, 2);
+
+        $this->log(PsrLogLevel::INFO, 'Transaction ended', [
+            "Duration" => "{$duration} seconds"
+        ]);
+
+        // Reset transaction
+        $this->transactionId = null;
+        $this->transactionStartTime = null;
     }
 }
-

@@ -2,66 +2,77 @@
 
 use PHPUnit\Framework\TestCase;
 use Telemetry\Telemetry;
-use Telemetry\LogLevel;
+use Psr\Log\LogLevel;
 use Telemetry\DriverInterface;
 
 class TelemetryTest extends TestCase
 {
-    private $telemetry;
+    private Telemetry $telemetry;
     private $driverMock;
 
+    /**
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     */
     protected function setUp(): void
     {
-        // Создаем mock драйвера
+        // Create a mock driver
         $this->driverMock = $this->createMock(DriverInterface::class);
-
-        // Передаем mock драйвер в Telemetry
         $this->telemetry = new Telemetry($this->driverMock);
     }
 
-    public function testLogMethodFormatsMessageCorrectly()
+    public function testBeginTransactionGeneratesTransactionIdAndLogsStart()
     {
-        $message = "Test log message";
-        $attributes = ["user" => "123"];
-
-        // Ожидаем, что метод write драйвера будет вызван с определенным форматом строки
+        // Expect that the write method is called with a start transaction message containing TransactionID
         $this->driverMock->expects($this->once())
             ->method('write')
-            ->with($this->stringContains("INFO")
-                ->and($this->stringContains("Test log message"))
-                ->and($this->stringContains("user=123"))
-            );
+            ->with($this->stringContains('Transaction started')
+        );
 
-        $this->telemetry->log(LogLevel::INFO, $message, $attributes);
+        $this->telemetry->beginTransaction();
+
+        // Verify that the transactionId is set
+        $reflection = new \ReflectionClass($this->telemetry);
+        $transactionIdProperty = $reflection->getProperty('transactionId');
+        $transactionIdProperty->setAccessible(true);
+        $this->assertNotNull($transactionIdProperty->getValue($this->telemetry));
     }
 
-    public function testStartTransactionLogsTransactionStart()
+    public function testLogMethodIncludesTransactionIdWhenInsideTransaction()
     {
-        $transactionId = "12345";
-        $attributes = ["operation" => "create_order"];
+        // Begin a transaction
+        $this->telemetry->beginTransaction();
 
-        // Ожидаем, что метод write будет вызван с сообщением о начале транзакции
+        // Expect that the write method includes transactionId in the date format
         $this->driverMock->expects($this->once())
             ->method('write')
-            ->with($this->stringContains("Transaction started")
-                ->and($this->stringContains("TransactionID=12345"))
-                ->and($this->stringContains("operation=create_order"))
-            );
+            ->with($this->stringContains('/[TransactionID]'));
 
-        $this->telemetry->startTransaction($transactionId, $attributes);
+        $this->telemetry->log(LogLevel::INFO, "Test message inside transaction");
     }
 
-    public function testEndTransactionLogsTransactionEnd()
+    public function testEndTransactionLogsEndWithDuration()
     {
-        $transactionId = "12345";
+        // Start the transaction and set the start time
+        $this->telemetry->beginTransaction();
 
-        // Ожидаем, что метод write будет вызван с сообщением о завершении транзакции
-        $this->driverMock->expects($this->once())
+        // Add a short delay to create a time difference
+        usleep(500000); // 0.5 seconds
+
+        // Verify that the write method logs transaction end with duration
+        $this->driverMock->expects($this->atLeastOnce())
             ->method('write')
-            ->with($this->stringContains("Transaction ended")
-                ->and($this->stringContains("TransactionID=12345"))
+            ->with($this->stringContains('Transaction ended')
+                ->and($this->stringContains('Duration=0.5'))
             );
 
-        $this->telemetry->endTransaction($transactionId);
+        // End the transaction
+        $this->telemetry->endTransaction();
+
+        // Check that the transactionId is cleared after the transaction ends
+        $reflection = new \ReflectionClass($this->telemetry);
+        $transactionIdProperty = $reflection->getProperty('transactionId');
+        $transactionIdProperty->setAccessible(true);
+        $this->assertNull($transactionIdProperty->getValue($this->telemetry));
     }
 }
+

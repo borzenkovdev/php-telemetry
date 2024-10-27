@@ -4,12 +4,16 @@
 # windows thumbnail cache
 Thumbs.db
 
-# composer vendor dir
+# composer files
 /vendor
+/composer.lock
 
-# Mac DS_Store Files
+# mac DS_Store Files
 .DS_Store
 
+# docker files
 Dockerfile
+docker-compose.yml
 
-/composer.lock
+# php unit generated files
+.phpunit.result.cache
