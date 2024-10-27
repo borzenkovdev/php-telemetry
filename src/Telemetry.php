@@ -3,6 +3,8 @@
 namespace Telemetry;
 
 use DateTime;
+use DateTimeZone;
+use Exception;
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel as PsrLogLevel;
 use Ramsey\Uuid\Uuid;
@@ -14,9 +16,21 @@ class Telemetry extends AbstractLogger
     private ?string $transactionId = null;
     private ?float $transactionStartTime = null;
 
+    /**
+     * The default date/time format for log messages written to a file.
+     * Feeds into the `$format` property.
+     */
+    private string $dateFormat = 'Y-m-d H:i:s';
+
+    /**
+     * Timezone for date/time values.
+     */
+    private DateTimeZone $timeZone;
+
     public function __construct(DriverInterface $driver)
     {
         $this->driver = $driver;
+        $this->timeZone = new DateTimeZone('UTC'); // Default time zone
     }
 
     /**
@@ -24,6 +38,7 @@ class Telemetry extends AbstractLogger
      * @param string|Stringable $message
      * @param array $context
      * @return void
+     * @throws Exception
      */
     public function log($level, string|Stringable $message, array $context = []): void
     {
@@ -36,14 +51,15 @@ class Telemetry extends AbstractLogger
      * @param string $message
      * @param array $context
      * @return string
+     * @throws Exception
      */
     private function formatMessage(string $level, string $message, array $context = []): string
     {
-        $timestamp = (new DateTime())->format('Y/m/d');
+        $timeStamp = (new DateTime('now', $this->timeZone))->format($this->dateFormat);
 
         // If transactions was set - add transactionId to log
         if ($this->transactionId !== null) {
-            $timestamp .= "/[{$this->transactionId}]";
+            $timeStamp .= " / {$this->transactionId}";
         }
 
         $contextString = '';
@@ -52,7 +68,7 @@ class Telemetry extends AbstractLogger
             $contextString .= " $key=$value";
         }
 
-        return "[$timestamp] [$level] $message $contextString";
+        return "[$timeStamp] [$level] $message $contextString";
     }
 
     /**
@@ -84,5 +100,22 @@ class Telemetry extends AbstractLogger
         // Reset transaction
         $this->transactionId = null;
         $this->transactionStartTime = null;
+    }
+
+    /**
+     * @param string $format
+     * @return void
+     */
+    public function setDateFormat(string $format): void
+    {
+        $this->dateFormat = $format;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function setTimeZone(string $timeZone): void
+    {
+        $this->timeZone = new DateTimeZone($timeZone);
     }
 }

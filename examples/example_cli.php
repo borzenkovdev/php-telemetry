@@ -6,7 +6,12 @@ use Telemetry\Telemetry;
 use Telemetry\Drivers\CliDriver;
 use Psr\Log\LogLevel;
 
-$telemetry = new Telemetry(new CliDriver());
+$cliDriver = new CliDriver();
+$telemetry = new Telemetry($cliDriver);
+
+// Set custom date format and time zone
+$telemetry->setDateFormat('Y-m-d H:i:s');
+$telemetry->setTimeZone('Europe/Berlin');
 
 // Logging without transaction
 $telemetry->log(LogLevel::INFO, "Service started", ["origin" => "http", "customerId" => "123"]);
