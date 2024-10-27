@@ -11,4 +11,3 @@ class CliDriver implements DriverInterface
         echo $message . PHP_EOL;
     }
 }
-

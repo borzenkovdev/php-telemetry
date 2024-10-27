@@ -17,7 +17,7 @@
     }
   ],
   "scripts": {
-    "lint": "phpcs --standard=PSR12 path/to/your/project",
+    "lint": "phpcs --standard=PSR12 src/",
     "test": "phpunit --configuration phpunit.xml"
   },
   "require": {
