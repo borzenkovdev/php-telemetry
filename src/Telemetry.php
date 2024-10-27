@@ -36,7 +36,7 @@ class Telemetry extends AbstractLogger
     /**
      * @param $level
      * @param string|Stringable $message
-     * @param array $context
+     * @param array<string, mixed> $context
      * @return void
      * @throws Exception
      */
@@ -49,7 +49,7 @@ class Telemetry extends AbstractLogger
     /**
      * @param string $level
      * @param string $message
-     * @param array $context
+     * @param array<string, mixed> $context
      * @return string
      * @throws Exception
      */
