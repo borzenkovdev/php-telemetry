@@ -59,7 +59,7 @@ class Telemetry extends AbstractLogger
 
         // If transactions was set - add transactionId to log
         if ($this->transactionId !== null) {
-            $timeStamp .= " / {$this->transactionId}";
+            $timeStamp .= " / $this->transactionId";
         }
 
         $contextString = '';
@@ -73,6 +73,7 @@ class Telemetry extends AbstractLogger
 
     /**
      * @return void
+     * @throws Exception
      */
     public function beginTransaction(): void
     {
@@ -94,7 +95,7 @@ class Telemetry extends AbstractLogger
         $duration = round(microtime(true) - $this->transactionStartTime, 2);
 
         $this->log(PsrLogLevel::INFO, 'Transaction ended', [
-            "Duration" => "{$duration} seconds"
+            'Duration' => "$duration seconds"
         ]);
 
         // Reset transaction

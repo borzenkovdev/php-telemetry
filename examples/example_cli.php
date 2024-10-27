@@ -14,14 +14,14 @@ $telemetry->setDateFormat('Y-m-d H:i:s');
 $telemetry->setTimeZone('Europe/Berlin');
 
 // Logging without transaction
-$telemetry->log(LogLevel::INFO, "Service started", ["origin" => "http", "customerId" => "123"]);
+$telemetry->log(LogLevel::INFO, 'Service started', ['origin' => 'http', 'customerId' => '123']);
 
 // Start transaction
 $telemetry->beginTransaction();
 usleep(500000);
-$telemetry->log(LogLevel::DEBUG, "Processing order", ["step" => "1"]);
+$telemetry->log(LogLevel::DEBUG, 'Processing order', ['step' => '1']);
 usleep(300000);
-$telemetry->log(LogLevel::WARNING, "Slow response from DB", ["db" => "orders"]);
+$telemetry->log(LogLevel::WARNING, 'Slow response from DB', ['db' => 'orders']);
 
 // End transaction
 $telemetry->endTransaction();

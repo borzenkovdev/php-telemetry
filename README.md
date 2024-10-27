@@ -1,6 +1,6 @@
 # Telemetry - This package offer a variety of features for meaningful logging.
 
-A flexible and configurable logging library for PHP, supporting transactions with unique IDs, customizable date formats, and time zones. 
+A flexible and configurable logging library for PHP, supporting transactions with unique IDs, customizable date formats, and time zones.
 This library simplifies tracking logs with transaction IDs and performance timings and  implements the
 [PSR-3 specification](https://www.php-fig.org/psr/psr-3/).
 
@@ -27,12 +27,12 @@ $ composer require borzenkovdev/php-telemetry
 <?php
 
 use Telemetry\Telemetry;
-use Telemetry\Drivers\CliDriver;
+use Telemetry\drivers\CliDriver;
 use Psr\Log\LogLevel;
 
 $telemetry = new Telemetry(new CliDriver());
 
-$telemetry->log(LogLevel::INFO, "Service started", ["origin" => "http", "customerId" => "123"]);
+$telemetry->log(LogLevel::INFO, 'Service started', ['origin' => 'http', 'customerId' => '123']);
 
 ```
 
@@ -42,14 +42,14 @@ $telemetry->log(LogLevel::INFO, "Service started", ["origin" => "http", "custome
 <?php
 
 use Telemetry\Telemetry;
-use Telemetry\Drivers\CliDriver;
+use Telemetry\drivers\CliDriver;
 use Psr\Log\LogLevel;
 
 $telemetry = new Telemetry(new CliDriver());
 
 $telemetry->beginTransaction();
-$telemetry->log(LogLevel::DEBUG, "Processing order", ["step" => "1"]);
-$telemetry->log(LogLevel::WARNING, "Slow response from DB", ["db" => "orders"]);
+$telemetry->log(LogLevel::DEBUG, 'Processing order', ['step' => '1']);
+$telemetry->log(LogLevel::WARNING, 'Slow response from DB', ['db' => 'orders']);
 $telemetry->endTransaction();
 ```
 

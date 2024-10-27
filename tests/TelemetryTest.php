@@ -30,7 +30,7 @@ class TelemetryTest extends TestCase
             }));
 
         // Log a test message to verify the format
-        $this->telemetry->log(LogLevel::INFO, "Testing custom date format");
+        $this->telemetry->log(LogLevel::INFO, 'Testing custom date format');
     }
 
     public function testSetTimeZone()
@@ -52,7 +52,7 @@ class TelemetryTest extends TestCase
             }));
 
         // Log a test message to verify the time zone
-        $this->telemetry->log(LogLevel::INFO, "Testing time zone setting");
+        $this->telemetry->log(LogLevel::INFO, 'Testing time zone setting');
     }
 
     public function testTransactionLogIncludesTransactionId()

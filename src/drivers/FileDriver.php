@@ -15,18 +15,17 @@ class FileDriver implements DriverInterface
      */
     public function __construct(string $filePath)
     {
-        // Check if file exists or try to create it
-        if (!file_exists($filePath)) {
-            if (!touch($filePath)) {
-                throw new Exception("Failed to create log file at: {$filePath}");
-            }
+        if (!file_exists($filePath) && !touch($filePath)) {
+            throw new Exception("Failed to create log file at: $filePath");
         }
 
-        // Check if the file is writable
-        if (!is_writable($filePath)) {
-            throw new Exception("Log file is not writable: {$filePath}");
+        $fileHandle = fopen($filePath, 'a');
+
+        if ($fileHandle === false) {
+            throw new Exception("Log file is not writable: $filePath");
         }
 
+        fclose($fileHandle);
         $this->filePath = $filePath;
     }
 
