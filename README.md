@@ -1,4 +1,7 @@
 # Telemetry - lightweight PHP Logging Library with Multi-Driver Support
+![Packagist Version](https://img.shields.io/packagist/v/borzenkovdev/php-telemetry)
+![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/borzenkovdev/php-telemetry)
+![Packagist Downloads](https://img.shields.io/packagist/dt/borzenkovdev/php-telemetry)
 
 A flexible and configurable logging library for PHP, supporting transactions with unique IDs, customizable date formats, and time zones.
 This library simplifies tracking logs with transaction IDs and performance timings and  implements the
