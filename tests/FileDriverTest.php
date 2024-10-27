@@ -9,14 +9,13 @@ class FileDriverTest extends TestCase
 
     protected function setUp(): void
     {
-        // Path to a temporary file for testing
-        $this->testFilePath = __DIR__ . '/test_log_file.log';
+        $this->testFilePath = sys_get_temp_dir() . '/test_log_file.log';
     }
 
     protected function tearDown(): void
     {
-        // Remove the test file if it exists after each test
         if (file_exists($this->testFilePath)) {
+            chmod($this->testFilePath, 0666); // Ensure file is writable for deletion
             unlink($this->testFilePath);
         }
     }
@@ -30,14 +29,10 @@ class FileDriverTest extends TestCase
 
     public function testThrowsExceptionIfFileIsNotWritable()
     {
-        // Create a file and set it to read-only
         file_put_contents($this->testFilePath, '');
         chmod($this->testFilePath, 0444); // Set file to read-only
-
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Log file is not writable');
-
-        // Attempt to create the driver with a read-only file
         new FileDriver($this->testFilePath);
     }
 }

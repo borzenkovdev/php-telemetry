@@ -9,15 +9,13 @@ class JsonFileDriverTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->testFilePath = __DIR__ . '/test_json_log_file.json';
+        $this->testFilePath = sys_get_temp_dir() . '/test_log_file.log';
     }
 
     protected function tearDown(): void
     {
-        // Remove the test file if it exists after each test
         if (file_exists($this->testFilePath)) {
-            // Reset permissions before deleting
-            chmod($this->testFilePath, 0666);
+            chmod($this->testFilePath, 0666); // Ensure file is writable for deletion
             unlink($this->testFilePath);
         }
     }
@@ -25,9 +23,7 @@ class JsonFileDriverTest extends TestCase
     public function testCreatesFileIfNotExists()
     {
         $this->assertFalse(file_exists($this->testFilePath));
-
         $jsonDriver = new JsonFileDriver($this->testFilePath);
-
         $this->assertTrue(file_exists($this->testFilePath));
     }
 
@@ -35,7 +31,6 @@ class JsonFileDriverTest extends TestCase
     {
         file_put_contents($this->testFilePath, '');
         chmod($this->testFilePath, 0444);
-
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Log file is not writable');
 
