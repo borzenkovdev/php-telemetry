@@ -1,0 +1,34 @@
+name: Run PHPUnit Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  php-tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-version: [8.0, 8.1, 8.2]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: mbstring, json, pdo_mysql, redis
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-progress --no-suggest
+
+      - name: Run tests
+        run: ./vendor/bin/phpunit --configuration phpunit.xml
