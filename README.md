@@ -105,3 +105,7 @@ $telemetry = new Telemetry($customDriver);
 $telemetry->log(LogLevel::INFO, "Testing custom driver");
 
 ```
+
+## UML Diagram
+
+![UML Class Diagram](docs/uml_class_diagram.png)
