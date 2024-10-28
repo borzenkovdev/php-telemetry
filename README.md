@@ -42,9 +42,9 @@ $telemetry->log(LogLevel::INFO, 'Service started', ['origin' => 'http', 'custome
 $telemetry->info('Info level log', ['user' => '123']);
 $telemetry->debug('Debug level log', ['details' => 'Step 1 completed']);
 $telemetry->error('Error level log', ['errorCode' => '404']);
-$telemetry->critical('Error level log', ['errorCode' => '500']);
+$telemetry->critical('Critical level log', ['errorCode' => '500']);
 $telemetry->alert('Alert level log', ['errorCode' => '500']);
-$telemetry->emergency('emergency level log', ['errorCode' => '500']);
+$telemetry->emergency('Emergency level log', ['errorCode' => '500']);
 
 ```
 
